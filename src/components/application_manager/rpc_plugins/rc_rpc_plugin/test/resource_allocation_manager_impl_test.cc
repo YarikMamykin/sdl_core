@@ -47,6 +47,7 @@ using test::components::application_manager_test::MockApplicationManager;
 using test::components::application_manager_test::MockRPCService;
 
 using ::application_manager::ApplicationSharedPtr;
+using ::application_manager::plugin_manager::ApplicationEvent;
 using ::application_manager::Message;
 using ::application_manager::MessageType;
 using ::protocol_handler::MessagePriority;
@@ -94,6 +95,8 @@ class RAManagerTest : public ::testing::Test {
     auto plugin_id = rc_rpc_plugin::RCRPCPlugin::kRCPluginID;
     app_ext_ptr_ = std::make_shared<rc_rpc_plugin::RCAppExtension>(plugin_id);
     ON_CALL(*mock_app_1_, app_id()).WillByDefault(Return(kAppId1));
+    ON_CALL(*mock_app_2_, app_id()).WillByDefault(Return(kAppId2));
+    // ON_CALL(apps_da_, GetData()).WillByDefault(ReturnRef(apps_));
 
     OnRCStatusNotificationExpectations();
   }
@@ -666,6 +669,58 @@ TEST_F(RAManagerTest, OnRCStatus_ModuleAllocation) {
             kSizeOfModules - 1u);
   EXPECT_EQ(msg_to_hmi_params[application_manager::strings::app_id].asInt(),
             kHMIAppId1);
+}
+
+TEST_F(RAManagerTest, SetResourceState_ForAllocatedResource) {
+  ResourceAllocationManagerImpl ra_manager(mock_app_mngr_, mock_rpc_service_);
+
+  EXPECT_CALL(mock_app_mngr_, application(kAppId1))
+      .WillRepeatedly(Return(mock_app_1_));
+
+  EXPECT_EQ(rc_rpc_plugin::AcquireResult::ALLOWED,
+            ra_manager.AcquireResource(kModuleType1, kAppId1));
+
+  ra_manager.SetResourceState(kModuleType1, kAppId1, ResourceState::eType::FREE);
+  EXPECT_TRUE(ra_manager.IsResourceFree(kModuleType1));
+  ra_manager.SetResourceState(kModuleType1, kAppId1, ResourceState::eType::BUSY);
+  EXPECT_FALSE(ra_manager.IsResourceFree(kModuleType1));
+}
+
+
+TEST_F(RAManagerTest, SetResourceState_ForNotAllocatedResource) {
+  ResourceAllocationManagerImpl ra_manager(mock_app_mngr_, mock_rpc_service_);
+
+  ra_manager.SetResourceState(kModuleType1, kAppId1, ResourceState::eType::FREE);
+  EXPECT_TRUE(ra_manager.IsResourceFree(kModuleType1));
+
+  ra_manager.SetResourceState(kModuleType2, kAppId2, ResourceState::eType::BUSY);
+  EXPECT_FALSE(ra_manager.IsResourceFree(kModuleType2));
+}
+
+TEST_F(RAManagerTest, ForceAcquireResource_SUCCESS) {
+  ResourceAllocationManagerImpl ra_manager(mock_app_mngr_, mock_rpc_service_);
+  ra_manager.SetAccessMode(hmi_apis::Common_RCAccessMode::eType::AUTO_DENY);
+
+  EXPECT_CALL(mock_app_mngr_, application(kAppId1))
+      .WillRepeatedly(Return(mock_app_1_));
+
+  EXPECT_CALL(mock_app_mngr_, application(kAppId2))
+      .WillRepeatedly(Return(mock_app_2_));
+
+  ON_CALL(mock_app_mngr_, applications()).WillByDefault(Return(apps_da_));
+
+  using namespace mobile_apis;
+  using namespace hmi_apis;
+  using namespace rc_rpc_plugin;
+  const HMILevel::eType app_level = HMILevel::eType::HMI_BACKGROUND;
+
+  EXPECT_CALL(*mock_app_2_, hmi_level(kDefaultWindowId))
+      .WillOnce(Return(app_level));
+
+  ra_manager.ForceAcquireResource(kModuleType1, kAppId1);
+
+  EXPECT_EQ(rc_rpc_plugin::AcquireResult::REJECTED,
+            ra_manager.AcquireResource(kModuleType1, kAppId2));
 }
 
 }  // namespace rc_rpc_plugin_test
