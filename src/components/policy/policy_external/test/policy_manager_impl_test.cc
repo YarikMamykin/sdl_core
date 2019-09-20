@@ -138,7 +138,8 @@ TEST_F(PolicyManagerImplTest, LoadPT_SetPT_PTIsLoaded) {
 
   EXPECT_CALL(*cache_manager_, GetVehicleDataItems())
       .WillOnce(Return(std::vector<policy_table::VehicleDataItem>()));
-  EXPECT_TRUE(policy_manager_->LoadPT(kFilePtUpdateJson, msg));
+  EXPECT_EQ(PolicyManager::LoadPtResult::kSuccess,
+            policy_manager_->LoadPT(kFilePtUpdateJson, msg));
   EXPECT_CALL(*cache_manager_, IsPTPreloaded());
   EXPECT_FALSE(policy_manager_->GetCache()->IsPTPreloaded());
 }
@@ -863,7 +864,8 @@ TEST_F(PolicyManagerImplTest_ExternalConsent,
 
   EXPECT_CALL(listener_, OnCertificateUpdated(_));
 
-  EXPECT_TRUE(policy_manager_->LoadPT("DummyFileName", msg));
+  EXPECT_EQ(PolicyManager::LoadPtResult::kSuccess,
+            policy_manager_->LoadPT("DummyFileName", msg));
 
   pt = policy_manager_->GetCache()->GetPT();
 
@@ -982,7 +984,8 @@ TEST_F(PolicyManagerImplTest_ExternalConsent,
 
   EXPECT_CALL(listener_, OnCertificateUpdated(_));
 
-  EXPECT_TRUE(policy_manager_->LoadPT("DummyFileName", msg));
+  EXPECT_EQ(PolicyManager::LoadPtResult::kSuccess,
+            policy_manager_->LoadPT("DummyFileName", msg));
 
   pt = policy_manager_->GetCache()->GetPT();
 

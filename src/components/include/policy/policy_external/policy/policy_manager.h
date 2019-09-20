@@ -60,6 +60,9 @@ class PolicyManager : public usage_statistics::StatisticsManager,
    * notified about changes done (e.g. after consents were changed) or not
    */
   enum NotificationMode { kSilentMode, kNotifyApplicationMode };
+
+  enum LoadPtResult { kSuccess, kWrongPtReceived, kNewPtRequired };
+
   virtual ~PolicyManager() {}
 
   /**
@@ -85,8 +88,10 @@ class PolicyManager : public usage_statistics::StatisticsManager,
    * @param pt_content PTU as binary string
    * @return true if successfully
    */
-  virtual bool LoadPT(const std::string& file,
-                      const BinaryMessage& pt_content) = 0;
+  virtual LoadPtResult LoadPT(const std::string& file,
+                              const BinaryMessage& pt_content) = 0;
+
+  virtual void OnPTUFinished(const LoadPtResult ptu_result) = 0;
 
   /**
    * @brief Resets Policy Table

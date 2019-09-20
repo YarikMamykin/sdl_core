@@ -53,6 +53,8 @@ typedef std::shared_ptr<utils::Callable> StatusNotifier;
 class PolicyManager : public usage_statistics::StatisticsManager,
                       public PolicyEncryptionFlagGetterInterface {
  public:
+  enum LoadPtResult { kSuccess, kWrongPtReceived, kNewPtRequired };
+
   virtual ~PolicyManager() {}
 
   /**
@@ -78,8 +80,10 @@ class PolicyManager : public usage_statistics::StatisticsManager,
    * @param pt_content PTU as binary string
    * @return true if successfully
    */
-  virtual bool LoadPT(const std::string& file,
-                      const BinaryMessage& pt_content) = 0;
+  virtual LoadPtResult LoadPT(const std::string& file,
+                              const BinaryMessage& pt_content) = 0;
+
+  virtual void OnPTUFinished(const LoadPtResult ptu_result) = 0;
 
   /**
    * @brief Resets Policy Table

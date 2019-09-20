@@ -291,7 +291,8 @@ const Json::Value PolicyManagerImplTest2::GetPTU(const std::string& file_name) {
   ifile.close();
   ::policy::BinaryMessage msg(json.begin(), json.end());
   // Load Json to cache
-  EXPECT_TRUE(policy_manager_->LoadPT(kFilePtUpdateJson, msg));
+  EXPECT_EQ(PolicyManager::LoadPtResult::kSuccess,
+            policy_manager_->LoadPT(kFilePtUpdateJson, msg));
   EXPECT_FALSE(policy_manager_->GetCache()->IsPTPreloaded());
   return root;
 }
@@ -478,7 +479,8 @@ void PolicyManagerImplTest2::
   json = root.toStyledString();
   ifile.close();
   ::policy::BinaryMessage msg(json.begin(), json.end());
-  EXPECT_TRUE(policy_manager_->LoadPT(kFilePtUpdateJson, msg));
+  EXPECT_EQ(PolicyManager::LoadPtResult::kSuccess,
+            policy_manager_->LoadPT(kFilePtUpdateJson, msg));
   EXPECT_FALSE(cache->IsPTPreloaded());
 
   // Check RPC in each level
@@ -584,7 +586,8 @@ void PolicyManagerImplTest2::EmulatePTAppRevoked(const std::string& ptu_name) {
   ifile.close();
 
   ::policy::BinaryMessage msg(json.begin(), json.end());
-  ASSERT_TRUE(policy_manager_->LoadPT(kDummyUpdateFileName, msg));
+  ASSERT_EQ(PolicyManager::LoadPtResult::kSuccess,
+            policy_manager_->LoadPT(kDummyUpdateFileName, msg));
 }
 
 // To avoid duplicate arrange of test
@@ -622,7 +625,8 @@ void PolicyManagerImplTest2::LoadPTUFromJsonFile(
   json = root.toStyledString();
   ifile.close();
   ::policy::BinaryMessage msg(json.begin(), json.end());
-  EXPECT_TRUE(policy_manager_->LoadPT(kFilePtUpdateJson, msg));
+  EXPECT_EQ(PolicyManager::LoadPtResult::kSuccess,
+            policy_manager_->LoadPT(kFilePtUpdateJson, msg));
   EXPECT_FALSE(policy_manager_->GetCache()->IsPTPreloaded());
 }
 
@@ -683,7 +687,8 @@ const Json::Value PolicyManagerImplTest_RequestTypes::GetPTU(
   ifile.close();
   ::policy::BinaryMessage msg(json.begin(), json.end());
   // Load Json to cache
-  EXPECT_TRUE(policy_manager_impl_sptr_->LoadPT(kFilePtUpdateJson, msg));
+  EXPECT_EQ(PolicyManager::LoadPtResult::kSuccess,
+            policy_manager_impl_sptr_->LoadPT(kFilePtUpdateJson, msg));
   EXPECT_FALSE(policy_manager_impl_sptr_->GetCache()->IsPTPreloaded());
   return root;
 }
