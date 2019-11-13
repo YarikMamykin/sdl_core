@@ -1092,9 +1092,7 @@ void PerformInteractionRequest::SendBothModeResponse(
       msg_param.empty() ? NULL : &msg_param;
   std::string info = app_mngr::commands::MergeInfos(
       ui_perform_info, ui_info_, vr_perform_info, vr_info_);
-
   DisablePerformInteraction();
-
   SendResponse(result,
                perform_interaction_result_code,
                info.empty() ? NULL : info.c_str(),
