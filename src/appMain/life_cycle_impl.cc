@@ -118,12 +118,8 @@ bool LifeCycleImpl::StartComponents() {
 
   media_manager_ = new media_manager::MediaManagerImpl(*app_manager_, profile_);
   app_manager_->set_connection_handler(connection_handler_);
-<<<<<<< HEAD
   app_manager_->AddPolicyObserver(protocol_handler_);
-  if (!app_manager_->Init(*last_state_, media_manager_)) {
-=======
   if (!app_manager_->Init(last_state_wrapper_, media_manager_)) {
->>>>>>> bdb43134a0... Fix LastState instance thread safe access
     LOG4CXX_ERROR(logger_, "Application manager init failed.");
     return false;
   }

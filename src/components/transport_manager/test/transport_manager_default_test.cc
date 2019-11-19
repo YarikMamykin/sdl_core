@@ -114,7 +114,6 @@ TEST(TestTransportManagerDefault, Init_LastStateNotUsed) {
       .WillRepeatedly(ReturnRef(dummy_parameter));
   EXPECT_CALL(transport_manager_settings, aoa_filter_serial_number())
       .WillRepeatedly(ReturnRef(dummy_parameter));
-  transport_manager.Init(mock_last_state);
 
   transport_manager.Init(wrapper);
   transport_manager.Stop();

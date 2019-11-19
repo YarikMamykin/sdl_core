@@ -48,7 +48,7 @@ namespace app_mngr = application_manager;
 CREATE_LOGGERPTR_GLOBAL(logger_, "RCConsentManager")
 
 RCConsentManagerImpl::RCConsentManagerImpl(
-    resumption::LastState& last_state,
+    resumption::LastStateWrapperPtr last_state,
     application_manager::ApplicationManager& application_manager,
     const uint32_t period_of_consent_expired)
     : app_manager_(application_manager)
@@ -204,7 +204,8 @@ void RCConsentManagerImpl::RemoveModuleExpiredConsents(
 }
 
 Json::Value& RCConsentManagerImpl::GetRemoteControlDataOrAppend() const {
-  Json::Value& dictionary = last_state_.get_dictionary();
+  auto last_state_accessor = last_state_->get_accessor();
+  Json::Value dictionary = last_state_accessor.GetData().dictionary();
 
   sync_primitives::AutoLock autolock(dictionary_control_lock_);
   if (!dictionary.isMember(app_mngr::strings::remote_control)) {
@@ -219,6 +220,7 @@ Json::Value& RCConsentManagerImpl::GetRemoteControlDataOrAppend() const {
     LOG4CXX_ERROR(logger_, "remote_control type INVALID rewrite");
     remote_control = Json::Value(Json::objectValue);
   }
+  last_state_accessor.GetMutableData().set_dictionary(dictionary);
   return remote_control;
 }
 

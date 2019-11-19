@@ -87,7 +87,7 @@ class RPCPlugin {
                     rpc_service::RPCService& rpc_service,
                     HMICapabilities& hmi_capabilities,
                     policy::PolicyHandlerInterface& policy_handler,
-                    resumption::LastState& last_state) = 0;
+                    resumption::LastStateWrapperPtr last_state) = 0;
   /**
    * @brief IsAbleToProcess check if plugin is able to process function
    * @param function_id RPC identifier

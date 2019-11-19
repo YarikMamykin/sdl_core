@@ -34,7 +34,7 @@
 #define SRC_COMPONENTS_APPLICATION_MANAGER_RPC_PLUGINS_RC_RPC_PLUGIN_INCLUDE_RC_CONSENT_MANAGER_IMPL_H
 
 #include "rc_consent_manager.h"
-#include "resumption/last_state.h"
+#include "resumption/last_state_wrapper.h"
 #include "utils/lock.h"
 
 namespace Json {
@@ -46,7 +46,7 @@ namespace rc_rpc_plugin {
 class RCConsentManagerImpl : public RCConsentManager {
  public:
   RCConsentManagerImpl(
-      resumption::LastState& last_state,
+      resumption::LastStateWrapperPtr last_state,
       application_manager::ApplicationManager& application_manager,
       const uint32_t period_of_consent_expired);
 
@@ -156,7 +156,7 @@ class RCConsentManagerImpl : public RCConsentManager {
 
  private:
   application_manager::ApplicationManager& app_manager_;
-  resumption::LastState& last_state_;
+  resumption::LastStateWrapperPtr last_state_;
   const uint32_t period_of_consent_expired_;
   mutable sync_primitives::Lock dictionary_control_lock_;
   mutable sync_primitives::Lock remote_control_lock_;

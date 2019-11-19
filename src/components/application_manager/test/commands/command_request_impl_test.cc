@@ -53,6 +53,8 @@
 
 #include "application_manager/mock_app_service_manager.h"
 #include "resumption/last_state_impl.h"
+#include "resumption/last_state_wrapper.h"
+#include "resumption/last_state_wrapper_impl.h"
 
 namespace test {
 namespace components {
@@ -607,8 +609,9 @@ TEST_F(CommandRequestImplTest, AppNotFound_HashUpdateNotExpected) {
 }
 
 TEST_F(CommandRequestImplTest, SendProviderRequest_ByServiceType) {
-  resumption::LastStateImpl last_state("app_storage_folder",
-                                       "app_info_storage");
+  auto last_state = std::make_shared<resumption::LastStateWrapperImpl>(
+        std::make_shared<resumption::LastStateImpl>("app_storage_folder", "app_info_storage"));
+
   MockAppServiceManager app_service_manager(app_mngr_, last_state);
   MockAppPtr mock_app = CreateMockApp();
   EXPECT_CALL(app_mngr_, GetAppServiceManager())
