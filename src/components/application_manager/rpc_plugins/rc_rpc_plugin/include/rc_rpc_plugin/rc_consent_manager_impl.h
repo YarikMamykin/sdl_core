@@ -58,7 +58,7 @@ class RCConsentManagerImpl : public RCConsentManager {
   rc_rpc_types::ModuleConsent GetModuleConsent(
       const std::string& app_id,
       const std::string& mac_address,
-      const rc_rpc_types::ModuleUid& module_id) const OVERRIDE;
+      const rc_rpc_types::ModuleUid& module_id) OVERRIDE;
 
   void RemoveExpiredConsents() OVERRIDE;
 
@@ -111,7 +111,7 @@ class RCConsentManagerImpl : public RCConsentManager {
    * In case the section is absent, will be appended a new empty section.
    * @return Remote Control section of LastState in Json
    */
-  Json::Value& GetRemoteControlDataOrAppend() const;
+  Json::Value& GetRemoteControlDataOrAppend() ;
 
   /**
    * @brief Gets Device applications section for specified device mac adress
@@ -120,7 +120,7 @@ class RCConsentManagerImpl : public RCConsentManager {
    * @return Device applications section of LastState in Json
    */
   Json::Value& GetDeviceApplicationsOrAppend(
-      const std::string& mac_address) const;
+      const std::string& mac_address) ;
 
   /**
    * @brief Get AppConsentsList section of LastState for specified application.
@@ -130,7 +130,7 @@ class RCConsentManagerImpl : public RCConsentManager {
    * @return AppConsentsList of LastState in Json
    */
   Json::Value& GetAppConsentsListOrAppend(const std::string& policy_app_id,
-                                          const std::string& mac_address) const;
+                                          const std::string& mac_address) ;
 
   /**
    * @brief Get Application consents section of Remote Control section of
@@ -138,7 +138,7 @@ class RCConsentManagerImpl : public RCConsentManager {
    * is absent, will be created a new empty section
    * @return AppConsents section of RemoteControl section of LastState in Jason
    */
-  Json::Value& GetAppsConsentsOrAppend() const;
+  Json::Value& GetAppsConsentsOrAppend() ;
 
   /**
    * @brief Get all module resource consents for specified application and
@@ -152,7 +152,7 @@ class RCConsentManagerImpl : public RCConsentManager {
   Json::Value& GetModuleTypeConsentsOrAppend(
       const std::string& policy_app_id,
       const std::string& mac_address,
-      const std::string& module_type) const;
+      const std::string& module_type) ;
 
  private:
   application_manager::ApplicationManager& app_manager_;
@@ -164,6 +164,7 @@ class RCConsentManagerImpl : public RCConsentManager {
   mutable sync_primitives::Lock applications_lock_;
   mutable sync_primitives::Lock app_consents_lock_;
   mutable sync_primitives::Lock module_consents_lock_;
+  Json::Value last_state_dictionary_;
 };
 
 }  // namespace rc_rpc_plugin
