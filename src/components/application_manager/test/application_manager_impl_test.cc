@@ -60,6 +60,7 @@
 #include "protocol_handler/mock_protocol_handler.h"
 #include "protocol_handler/mock_session_observer.h"
 #include "resumption/mock_last_state.h"
+#include "resumption/last_state_wrapper_impl.h"
 #include "utils/custom_string.h"
 #include "utils/file_system.h"
 #include "utils/lock.h"
@@ -155,7 +156,7 @@ class ApplicationManagerImplTest
       , mock_last_state_(std::make_shared<resumption_test::MockLastState>())
       , mock_policy_handler_(new NiceMock<MockPolicyHandlerInterface>)
       , mock_app_service_manager_(
-            new MockAppServiceManager(mock_app_mngr_, std::make_shared<resumption::LastStateWrapperImpl>(mock_last_state_))
+            new MockAppServiceManager(mock_app_mngr_, std::make_shared<resumption::LastStateWrapperImpl>(mock_last_state_)))
       , mock_message_helper_(
             application_manager::MockMessageHelper::message_helper_mock())
       , mock_statistics_manager_(
@@ -207,7 +208,7 @@ class ApplicationManagerImplTest
         .WillByDefault(Return());
     app_manager_impl_->SetAppServiceManager(mock_app_service_manager_);
     Json::Value empty;
-    ON_CALL(mock_last_state_, get_dictionary()).WillByDefault(ReturnRef(empty));
+    ON_CALL(*mock_last_state_, dictionary()).WillByDefault(Return(empty));
 
     auto request = std::make_shared<smart_objects::SmartObject>(
         smart_objects::SmartType_Map);

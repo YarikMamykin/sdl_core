@@ -637,8 +637,9 @@ TEST_F(CommandRequestImplTest, SendProviderRequest_ByServiceType) {
 }
 
 TEST_F(CommandRequestImplTest, SendProviderRequest_ByProviderID) {
-  resumption::LastStateImpl last_state("app_storage_folder",
-                                       "app_info_storage");
+  auto last_state = std::make_shared<resumption::LastStateWrapperImpl>(
+        std::make_shared<resumption::LastStateImpl>("app_storage_folder", "app_info_storage"));
+
   MockAppServiceManager app_service_manager(app_mngr_, last_state);
   MockAppPtr mock_app = CreateMockApp();
   EXPECT_CALL(app_mngr_, GetAppServiceManager())
@@ -664,8 +665,9 @@ TEST_F(CommandRequestImplTest, SendProviderRequest_ByProviderID) {
 }
 
 TEST_F(CommandRequestImplTest, SendProviderRequestToHMI_ByProviderID) {
-  resumption::LastStateImpl last_state("app_storage_folder",
-                                       "app_info_storage");
+  auto last_state = std::make_shared<resumption::LastStateWrapperImpl>(
+        std::make_shared<resumption::LastStateImpl>("app_storage_folder", "app_info_storage"));
+
   MockAppServiceManager app_service_manager(app_mngr_, last_state);
   MockAppPtr mock_app = CreateMockApp();
   EXPECT_CALL(app_mngr_, GetAppServiceManager())

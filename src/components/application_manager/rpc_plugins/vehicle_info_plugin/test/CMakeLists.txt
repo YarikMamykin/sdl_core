@@ -54,6 +54,7 @@ file(GLOB SOURCES
   ${CMAKE_CURRENT_SOURCE_DIR}/vehicle_data_item_schema_test.cc
   ${COMPONENTS_DIR}/application_manager/src/message.cc
   ${COMPONENTS_DIR}/application_manager/src/event_engine/*
+  ${COMPONENTS_DIR}/resumption/src/last_state_wrapper_impl.cc
 )
 
 set(LIBRARIES
